@@ -2,6 +2,8 @@ package com.ldd.volleyutils.volley;
 
 import android.content.Context;
 
+import org.json.JSONObject;
+
 /**
  * Created by Mr.liu
  * On 2016/7/11
@@ -91,6 +93,11 @@ public class IRequest {
     public static void post(Context context, String url, RequestParams params,
                             RequestListener l) {
         RequestManager.post(url, context, params, l);
+    }
+
+    public static void post2(Context context, String url, JSONObject jsonObject,
+                            RequestListener l) {
+        RequestManager.post2(url, context, jsonObject, l);
     }
 
     /**

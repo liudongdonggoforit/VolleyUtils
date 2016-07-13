@@ -6,10 +6,14 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.Volley;
 import com.ldd.volleyutils.ApplicationTest;
 import com.ldd.volleyutils.fragments.LoadingFragment;
 import com.ldd.volleyutils.utils.JsonUtils;
+
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 
@@ -103,6 +107,15 @@ public class RequestManager {
         addRequest(request,tag);
     }
 
+
+    public static void post2(String url,Object tag,JSONObject params,RequestListener listener){
+//        ByteArrayRequest request = new ByteArrayRequest(Request.Method.POST,url,params,responseListener(listener,false,null),
+//                responseError(listener,false,null));
+        JsonRequest<JSONObject> request1 = new JsonObjectRequest(Request.Method.POST,url,params,responseListener2(listener,false,null),
+                responseError(listener,false,null));
+        addRequest(request1,tag);
+    }
+
     /**
      * post 请求带进度  返回String
      * @param url
@@ -173,6 +186,22 @@ public class RequestManager {
                 l.requestSuccess(JsonUtils.object(data,classOfT));
                 if (flag){
                     if (p.getShowsDialog()){
+                        p.dismiss();
+                    }
+                }
+            }
+        };
+    }
+
+    public static Response.Listener<JSONObject> responseListener2(final RequestListener l, final boolean flag, final LoadingFragment p){
+        return new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                JSONObject data = null;
+                data = response;
+                l.requestSuccess(data);
+                if (flag) {
+                    if (p.getShowsDialog()) {
                         p.dismiss();
                     }
                 }

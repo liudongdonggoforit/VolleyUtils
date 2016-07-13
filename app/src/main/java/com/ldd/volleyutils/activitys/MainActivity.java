@@ -11,6 +11,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.ldd.volleyutils.ApplicationTest;
@@ -22,6 +24,8 @@ import com.ldd.volleyutils.volley.RequestJsonListener;
 import com.ldd.volleyutils.volley.RequestListener;
 import com.ldd.volleyutils.volley.RequestParams;
 
+import org.json.JSONObject;
+import org.json.JSONStringer;
 import org.w3c.dom.Text;
 
 import java.util.HashMap;
@@ -43,19 +47,19 @@ public class MainActivity extends BaseActivity {
 ////        params.put("cityname","北京");
 //        params.put("city","%E5%8C%97%E4%BA%AC");
 //        params.put("key","9d25833f2ab6a86e5517ddff60b9aa7d");
-        IRequest.get(MainActivity.this, url, new RequestListener() {
-            @Override
-            public void requestSuccess(String json) {
-                city.setText(json);
-            }
-
-            @Override
-            public void requestError(VolleyError error) {
-                city.setText(error.getMessage());
-                Log.i(TAG,"请求错误："+error.getMessage());
-                Toast.makeText(MainActivity.this,"请求出错："+error.getMessage(),Toast.LENGTH_SHORT).show();
-            }
-        });
+//        IRequest.get(MainActivity.this, url, new RequestListener() {
+//            @Override
+//            public void requestSuccess(String json) {
+//                city.setText(json);
+//            }
+//
+//            @Override
+//            public void requestError(VolleyError error) {
+//                city.setText(error.getMessage());
+//                Log.i(TAG,"请求错误："+error.getMessage());
+//                Toast.makeText(MainActivity.this,"请求出错："+error.getMessage(),Toast.LENGTH_SHORT).show();
+//            }
+//        });
 //        IRequest.post(MainActivity.this, url2, params, new RequestListener() {
 //            @Override
 //            public void requestSuccess(String json) {
@@ -70,26 +74,57 @@ public class MainActivity extends BaseActivity {
 //            }
 //        });
 
-        StringRequest request = new StringRequest(Request.Method.POST, url2, new Response.Listener<String>() {
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("cityname","北京");
+        JSONObject jsonObject = new JSONObject(map);
+        IRequest.post2(MainActivity.this, url2, jsonObject, new RequestListener() {
             @Override
-            public void onResponse(String response) {
-                city.setText(response);
+            public void requestSuccess(String json) {
+
             }
-        }, new Response.ErrorListener() {
+
             @Override
-            public void onErrorResponse(VolleyError error) {
+            public void requestSuccess(JSONObject json) {
+                city.setText(json.toString());
+            }
+
+            @Override
+            public void requestError(VolleyError error) {
+                Log.e(TAG, error.getMessage(), error);
                 city.setText(error.getMessage());
                 Log.i(TAG, "请求错误：" + error.getMessage());
                 Toast.makeText(MainActivity.this,"请求出错："+error.getMessage(),Toast.LENGTH_SHORT).show();
             }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> map = new HashMap<String,String>();
-                map.put("cityname","北京");
-                return map;
-            }
-        };
-        requestQueue.add(request);
+        });
+//        JsonRequest<JSONObject> request = new JsonObjectRequest(Request.Method.POST,url2, jsonObject,
+//                new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        Log.d(TAG, "response -> " + response.toString());
+//                        city.setText(response.toString());
+//                    }
+//                }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Log.e(TAG, error.getMessage(), error);
+//                city.setText(error.getMessage());
+//                Log.i(TAG, "请求错误：" + error.getMessage());
+//                Toast.makeText(MainActivity.this,"请求出错："+error.getMessage(),Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        StringRequest request = new StringRequest(Request.Method.POST, url2, new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//                city.setText(response);
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                city.setText(error.getMessage());
+//                Log.i(TAG, "请求错误：" + error.getMessage());
+//                Toast.makeText(MainActivity.this,"请求出错："+error.getMessage(),Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        requestQueue.add(request);
     }
 }
