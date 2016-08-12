@@ -3,6 +3,8 @@ package com.ldd.volleyutils.activitys;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ import com.ldd.volleyutils.volley.RequestJsonListener;
 import com.ldd.volleyutils.volley.RequestListener;
 import com.ldd.volleyutils.volley.RequestParams;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.w3c.dom.Text;
@@ -38,46 +41,60 @@ public class MainActivity extends BaseActivity {
     private String url3 = "http://web.juhe.cn:8080/environment/air/cityair";
     private Weather weather;
     RequestQueue requestQueue = Volley.newRequestQueue(ApplicationTest.getContext());
+    private String postUrl = "http://192.168.0.20:8080/PetM-WebApi/";
+    TextView city;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final TextView city = (TextView) findViewById(R.id.city);
-//        RequestParams params = new RequestParams();
-////        params.put("cityname","北京");
-//        params.put("city","%E5%8C%97%E4%BA%AC");
-//        params.put("key","9d25833f2ab6a86e5517ddff60b9aa7d");
-//        IRequest.get(MainActivity.this, url, new RequestListener() {
-//            @Override
-//            public void requestSuccess(String json) {
-//                city.setText(json);
-//            }
-//
-//            @Override
-//            public void requestError(VolleyError error) {
-//                city.setText(error.getMessage());
-//                Log.i(TAG,"请求错误："+error.getMessage());
-//                Toast.makeText(MainActivity.this,"请求出错："+error.getMessage(),Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//        IRequest.post(MainActivity.this, url2, params, new RequestListener() {
-//            @Override
-//            public void requestSuccess(String json) {
-//                city.setText(json);
-//            }
-//
-//            @Override
-//            public void requestError(VolleyError error) {
-//                city.setText(error.getMessage());
-//                Log.i(TAG,"请求错误："+error.getMessage());
-//                Toast.makeText(MainActivity.this,"请求出错："+error.getMessage(),Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        city = (TextView) findViewById(R.id.city);
+        Button post = (Button) findViewById(R.id.post);
+        post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                try {
+                    jsonPost();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                post();
+//                getJson();
+            }
+        });
+    }
 
-        Map<String,String> map = new HashMap<String,String>();
-        map.put("cityname","北京");
-        JSONObject jsonObject = new JSONObject(map);
-        IRequest.post2(MainActivity.this, url2, jsonObject, new RequestListener() {
+    private void post() {
+       RequestParams params= new RequestParams();
+        params.put("telnumber","13120256827");
+//        params.put("inputnumber","password");
+        IRequest.post(MainActivity.this, postUrl + "/UserActivate", params, new RequestListener() {
+            @Override
+            public void requestSuccess(String json) {
+                city.setText(json);
+            }
+
+            @Override
+            public void requestSuccess(JSONObject json) {
+
+            }
+
+            @Override
+            public void requestError(VolleyError error) {
+                city.setText(error.getMessage());
+            }
+        });
+    }
+
+    private void jsonPost() {
+//        Map<String,String> map = new HashMap<String,String>();
+//        map.put("cityname","北京");
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("telnumber", "15045412899");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        IRequest.post2(MainActivity.this, postUrl + "/UserActivate", jsonObject, new RequestListener() {
             @Override
             public void requestSuccess(String json) {
 
@@ -93,38 +110,27 @@ public class MainActivity extends BaseActivity {
                 Log.e(TAG, error.getMessage(), error);
                 city.setText(error.getMessage());
                 Log.i(TAG, "请求错误：" + error.getMessage());
-                Toast.makeText(MainActivity.this,"请求出错："+error.getMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "请求出错：" + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-//        JsonRequest<JSONObject> request = new JsonObjectRequest(Request.Method.POST,url2, jsonObject,
-//                new Response.Listener<JSONObject>() {
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        Log.d(TAG, "response -> " + response.toString());
-//                        city.setText(response.toString());
-//                    }
-//                }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                Log.e(TAG, error.getMessage(), error);
-//                city.setText(error.getMessage());
-//                Log.i(TAG, "请求错误：" + error.getMessage());
-//                Toast.makeText(MainActivity.this,"请求出错："+error.getMessage(),Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//        StringRequest request = new StringRequest(Request.Method.POST, url2, new Response.Listener<String>() {
-//            @Override
-//            public void onResponse(String response) {
-//                city.setText(response);
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                city.setText(error.getMessage());
-//                Log.i(TAG, "请求错误：" + error.getMessage());
-//                Toast.makeText(MainActivity.this,"请求出错："+error.getMessage(),Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//        requestQueue.add(request);
+    }
+
+    private void getJson() {
+      IRequest.get(MainActivity.this, postUrl + "login-mobile/18600795635", new RequestListener() {
+          @Override
+          public void requestSuccess(String json) {
+              city.setText(json);
+          }
+
+          @Override
+          public void requestSuccess(JSONObject json) {
+
+          }
+
+          @Override
+          public void requestError(VolleyError error) {
+              city.setText(error.getMessage());
+          }
+      });
     }
 }
